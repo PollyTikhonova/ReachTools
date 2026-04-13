@@ -1280,8 +1280,7 @@ void combine_for_PISA(string r1, string r2, string out_r1, string out_r2){
 		read2 read_2;
 		read_2.init(in_line2.seq);
 		read_2.trim();
-		string new_seq = read_2.sbc1 + read_2.sbc2 + read_2.sbc3 + read_2.sbc4;
-		string umi = read_2.umi;
+		string new_seq = read_2.sbc1 + read_2.sbc2 + read_2.sbc3 + read_2.sbc4 + read_2.umi;
 		//string umi = in_line.seq.substr(0, 10);
 		in_line2.seq = new_seq;
 		in_line2.qual = in_line2.qual.substr(0, in_line2.seq.length());
@@ -1292,7 +1291,8 @@ void combine_for_PISA(string r1, string r2, string out_r1, string out_r2){
 	}
 	pclose(red1);
 	pclose(red2);
-	pclose(outfile);
+	pclose(outfileR1);
+	pclose(outfileR2);
 
 	cout << total << " read pairs processed." << endl;
 	cout << pass << " read pairs passed docking rate." << endl;
