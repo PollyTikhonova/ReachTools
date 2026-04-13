@@ -35,6 +35,7 @@ void pairBC2R1(string bam, string target);
 void pairBC2R1_help();
 void pre_process(string read2);
 void combine(string sample);
+void combine_for_PISA(string read1, string read2, string read1_out, string read2_out);
 void pre_process_help();
 void combine_help();
 void convert(string sample);
@@ -185,6 +186,15 @@ int main(int argc, char** argv) {
 			return 1;
 		}
 		combine(argv[2]);
+		return 0;
+	}
+
+	if(mod == "combinePISA"){
+		if(argc < 3){
+			combine_help();
+			return 1;
+		}
+		combine_for_PISA(argv[2], argv[3], argv[4], argv[5]);
 		return 0;
 	}
 
@@ -1229,6 +1239,64 @@ void pre_process(string r2){
 	}
 	pclose(infile);
 	pclose(outfile);
+
+}
+
+void combine_for_PISA(string r1, string r2, string out_r1, string out_r2){
+	int total = 0;
+	int pass = 0;
+	string s1 = "zcat ";
+	string s2 = r1;
+	string s3 = s1 + s2;
+	FILE * red1;
+	red1 = popen(s3.c_str(), "r");
+	s1 = "gzip - > ";
+	s2 = out_r1;
+	s3 = s1 + s2;
+	FILE * outfileR1;
+	outfileR1 = popen(s3.c_str(), "w");
+	s1 = "zcat ";
+	s2 = r2;
+	s3 = s1 + s2;
+	FILE * red2;
+	red2 = popen(s3.c_str(), "r");
+	s1 = "gzip - > ";
+	s2 = out_r2;
+	s3 = s1 + s2;
+	FILE * outfileR2;
+	outfileR2 = popen(s3.c_str(), "w");
+	char buffer[2000];
+	fqline in_line1;
+	fqline in_line2;
+	while(fgets(buffer, sizeof(buffer), red1)){
+		++total;
+		string line1(buffer);
+		fgets(buffer, sizeof(buffer), red2);
+		string line2(buffer);
+		line1 = cxstring::chomp(line1);
+		line2 = cxstring::chomp(line2);
+		in_line1.read_part_record(red1, line1);
+		in_line2.read_part_record(red2, line2);
+		read2 read_2;
+		read_2.init(in_line2.seq);
+		read_2.trim();
+		string new_seq = read_2.sbc1 + read_2.sbc2 + read_2.sbc3 + read_2.sbc4;
+		string umi = read_2.umi;
+		//string umi = in_line.seq.substr(0, 10);
+		in_line2.seq = new_seq;
+		in_line2.qual = in_line2.qual.substr(0, in_line2.seq.length());
+		if(in_line2.seq.length()!=24)continue;
+		in_line1.write_record(outfileR1);
+		in_line2.write_record(outfileR2);
+		++pass;
+	}
+	pclose(red1);
+	pclose(red2);
+	pclose(outfile);
+
+	cout << total << " read pairs processed." << endl;
+	cout << pass << " read pairs passed docking rate." << endl;
+	return;
 
 }
 
