@@ -189,7 +189,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 
-	if(mod == "combinePISA"){
+	if(mod == "combine_for_PISA"){
 		if(argc < 3){
 			combine_help();
 			return 1;
@@ -1285,6 +1285,8 @@ void combine_for_PISA(string r1, string r2, string out_r1, string out_r2){
 		in_line2.seq = new_seq;
 		in_line2.qual = in_line2.qual.substr(0, in_line2.seq.length());
 		if(in_line2.seq.length()!=24)continue;
+		in_line1.mark = in_line1.mark.substr(0, 1);
+		in_line2.mark = in_line2.mark.substr(0, 1);
 		in_line1.write_record(outfileR1);
 		in_line2.write_record(outfileR2);
 		++pass;
