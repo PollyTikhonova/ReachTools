@@ -1284,7 +1284,7 @@ void combine_for_PISA(string r1, string r2, string out_r1, string out_r2){
 		//string umi = in_line.seq.substr(0, 10);
 		in_line2.seq = new_seq;
 		in_line2.qual = in_line2.qual.substr(0, in_line2.seq.length());
-		if(in_line2.seq.length()!=24)continue;
+		if(in_line2.seq.length()!=34)continue;
 		in_line1.mark = in_line1.mark.substr(0, 1);
 		in_line2.mark = in_line2.mark.substr(0, 1);
 		in_line1.write_record(outfileR1);
